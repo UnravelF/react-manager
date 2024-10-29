@@ -2,9 +2,10 @@ import { message } from 'antd';
 import axios, { AxiosError } from 'axios';
 import storage from './storage';
 import env from '@/config';
+import { Result } from'@/types/api
 
 const instance = axios.create({
-  baseURL: import.meta.env.VITE_BASE_API,
+  // baseURL: import.meta.env.VITE_BASE_API,
   timeout: 5000,
   timeoutErrorMessage: '请求超时，请稍后再试',
   withCredentials: true
@@ -16,6 +17,7 @@ instance.interceptors.request.use(
     if (token) {
       config.headers['Authorization'] = 'Token::' + token;
     }
+    config.headers.icode = 'A7EEA094EAA44AF4';
     if (env.mock) {
       config.baseURL = env.mockApi;
     } else {
@@ -32,9 +34,9 @@ instance.interceptors.request.use(
 
 instance.interceptors.response.use(
   res => {
-    const data = res.data;
+    const data:Result = res.data;
     if (data.code === 500001) {
-      localStorage.removeItem('token');
+      storage.remove('token');
     } else if (data.code != 0) {
       message.error(data.msg);
       return Promise.reject(data);
@@ -49,9 +51,9 @@ instance.interceptors.response.use(
 
 export default {
   get<T>(url: string, params?: object): Promise<T> {
-    return axios.get(url, { params });
+    return instance.get(url, { params });
   },
   post<T>(url: string, params: any): Promise<T> {
-    return axios.post(url, params);
+    return instance.post(url, params);
   }
 };

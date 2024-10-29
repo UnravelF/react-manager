@@ -7,7 +7,7 @@ type ENV = 'stg' | 'prd' | 'dev';
 
 let env: ENV = 'dev';
 
-if (location.host.indexOf('localhost')) {
+if (location.host.indexOf('http://localhost')) {
   env = 'dev'
 } else if(location.host === 'driver-stg.marsview.cc') {
   env = 'stg'
