@@ -1,6 +1,6 @@
 module.exports = {
   // 最大列数
-  printWidth: 120,
+  printWidth: 80,
   useTabs: false,
   // 缩进
   tabWidth: 2,
