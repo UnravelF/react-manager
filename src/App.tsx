@@ -1,7 +1,6 @@
 import 'normalize.css';
-import { HashRouter } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 import { ConfigProvider } from 'antd';
-
 import './App.css';
 import Root from './router/router';
 
@@ -14,9 +13,9 @@ function App() {
         }
       }}
     >
-      <HashRouter>
+      <BrowserRouter>
         <Root />
-      </HashRouter>
+      </BrowserRouter>
     </ConfigProvider>
   );
 }

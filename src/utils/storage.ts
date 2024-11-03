@@ -5,7 +5,11 @@
  */
 export default {
   set(key: string, value: any) {
-    localStorage.setItem(key, JSON.stringify(value));
+    if(typeof value !== 'string') {
+      localStorage.setItem(key, JSON.stringify(value))
+    } else {
+      localStorage.setItem(key, value);
+    }
   },
   get(key: string) {
     const value = localStorage.getItem(key);

@@ -1,5 +1,6 @@
 import { Navigate, useRoutes } from 'react-router-dom';
 
+import Layout from '@/layout'
 import Welcome from '@/pages/welcome';
 import Login from '@/pages/login';
 import NotFound from '@/pages/notFound';
@@ -7,15 +8,20 @@ import NotFound from '@/pages/notFound';
 const routes = [
   {
     path: '/',
-    element:<Navigate to='/welcome' />
+    element: <Navigate to='/welcome' />
   },
   {
     path: '/login',
     element: <Login />
   },
   {
-    path: '/welcome',
-    element: <Welcome />
+    element: <Layout />,
+    children: [
+      {
+        path: '/welcome',
+        element: <Welcome />
+      }
+    ]
   },
   {
     path: '*',

@@ -1,6 +1,6 @@
-import { memo } from 'react';
+import { memo, useState } from 'react';
 import { Button, Form, Input, message } from 'antd';
-
+import { useNavigate } from 'react-router-dom';
 import style from './index.module.less';
 import { login } from '@/api';
 import { LoginRequest } from '@/types/api';
@@ -12,31 +12,46 @@ type FieldType = {
 };
 
 const Login = memo(() => {
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
   const onFinish = async (value: LoginRequest.params) => {
+    setLoading(true);
     const res = await login(value);
-    storage.set('token', res)
-    message.success('登录成功！')
-    const params = new URLSearchParams(location.search)
-    location.href = params.get('callback') || '/welcome';
+    setLoading(false);
+    storage.set('token', res);
+    message.success('登录成功！');
+    const params = new URLSearchParams(location.search);
+    navigate(params.get('callback') || '/welcome');
   };
   const onFinishFailed = () => {
-    console.log('onFinishFailed');
+    message.error('登录失败！');
   };
 
   return (
     <div className={style.login}>
       <div className={style.loginWrapper}>
         <div className={style.title}>Login</div>
-        <Form name='basic' onFinish={onFinish} onFinishFailed={onFinishFailed} autoComplete='off'>
-          <Form.Item<FieldType> name='userName' rules={[{ required: true, message: 'Please input your username!' }]}>
+        <Form
+          name='basic'
+          onFinish={onFinish}
+          onFinishFailed={onFinishFailed}
+          autoComplete='off'
+        >
+          <Form.Item<FieldType>
+            name='userName'
+            rules={[{ required: true, message: '请输入用户名!' }]}
+          >
             <Input />
           </Form.Item>
 
-          <Form.Item<FieldType> name='userPwd' rules={[{ required: true, message: 'Please input your password!' }]}>
+          <Form.Item<FieldType>
+            name='userPwd'
+            rules={[{ required: true, message: '请输入密码!' }]}
+          >
             <Input.Password />
           </Form.Item>
           <Form.Item>
-            <Button type='primary' block htmlType='submit'>
+            <Button type='primary' block htmlType='submit' loading={loading}>
               登录
             </Button>
           </Form.Item>
