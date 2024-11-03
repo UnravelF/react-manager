@@ -14,7 +14,7 @@ instance.interceptors.request.use(
   config => {
     const token = storage.get('token');
     if (token) {
-      config.headers['Authorization'] = 'Token::' + token;
+      config.headers['Authorization'] = 'bearer ' + token;
     }
     if (env.mock) {
       config.baseURL = env.mockApi;

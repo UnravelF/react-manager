@@ -11,3 +11,18 @@ export namespace LoginRequest {
     userPwd: string;
   }
 }
+
+export namespace LoginUserInfo {
+  export interface UserInfoProps {
+    createId: number;
+    deptId: string;
+    userName: string;
+    deptName: string;
+    role: number;
+    roleList: string;
+    state: number;
+    userEmail: string;
+    userId: number;
+    _id: string;
+  }
+}
