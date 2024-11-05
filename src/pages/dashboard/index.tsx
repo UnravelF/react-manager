@@ -3,13 +3,13 @@ import { Descriptions, DescriptionsProps } from 'antd';
 
 import styles from './index.module.less';
 import store from '@/store';
-import { useUserRole } from '@/hook/use-usr-role';
+import { useUserRole } from '@/hook/use-user-role';
 import { UserStatusEnum } from '@/types/common';
 
 const Dashboard: React.FC = memo(() => {
   const { userInfo } = store;
   const { roleName, isAdmin } = useUserRole(userInfo.roleList);
-  
+
   const items: DescriptionsProps['items'] = [
     {
       key: '1',

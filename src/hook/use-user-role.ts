@@ -8,4 +8,4 @@ const useUserRole = (roleId: string | string[]) => {
   return { isAdmin, roleName }
 }
 
-export {useUserRole} ;
+export {useUserRole};
