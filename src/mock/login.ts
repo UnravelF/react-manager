@@ -15,7 +15,7 @@ Mock.mock(`${env.baseApi}/users/getUserInfo`, {
     deptId: 'admin-1',
     deptName: '管理部',
     role: 1,
-    roleList: 'admin-role',
+    roleList: 'admin',
     state: 1,
     userEmail: 'hgfhgf1225@163.com',
     userId: 100001,

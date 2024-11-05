@@ -4,6 +4,7 @@ import Layout from '@/layout'
 import Welcome from '@/pages/welcome';
 import Login from '@/pages/login';
 import NotFound from '@/pages/notFound';
+import Dashboard from '@/pages/dashboard';
 
 const routes = [
   {
@@ -20,6 +21,10 @@ const routes = [
       {
         path: '/welcome',
         element: <Welcome />
+      },
+      {
+        path: '/dashboard',
+        element: <Dashboard />
       }
     ]
   },
