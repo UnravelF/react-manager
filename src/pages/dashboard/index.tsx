@@ -42,6 +42,10 @@ const Dashboard: React.FC = memo(() => {
   useEffect(() => {
     const lineChartDom = document.getElementById('lineChart');
     const lineChartInstance = echarts.init(lineChartDom as HTMLElement);
+    const pieChartCityDom = document.getElementById('pieChartCity');
+    const pieChartCityInstance = echarts.init(pieChartCityDom as HTMLElement);
+    const pieChartAgeDom = document.getElementById('pieChartAge');
+    const pieChartAgeInstance = echarts.init(pieChartAgeDom as HTMLElement);
     lineChartInstance.setOption({
       title: {
         text: '月发表文章数及访问量'
@@ -89,6 +93,75 @@ const Dashboard: React.FC = memo(() => {
         }
       ]
     });
+
+    pieChartCityInstance.setOption({
+      title: {
+        text: '各技术栈占比',
+        left: 'center'
+      },
+      tooltip: {
+        trigger: 'item'
+      },
+      legend: {
+        orient: 'vertical',
+        left: 'left'
+      },
+      series: [
+        {
+          name: '各技术栈占比',
+          type: 'pie',
+          radius: '50%',
+          data: [
+            { value: 50.6, name: 'Vue' },
+            { value: 30.4, name: 'React' },
+            { value: 15.4, name: 'Angular' },
+            { value: 2.1, name: 'JQuery' },
+            { value: 0.5, name: 'Php' }
+          ],
+          emphasis: {
+            itemStyle: {
+              shadowBlur: 10,
+              shadowOffsetX: 0,
+              shadowColor: 'rgba(0, 0, 0, 0.5)'
+            }
+          }
+        }
+      ]
+    });
+    pieChartAgeInstance.setOption({
+      title: {
+        text: '技术社区讨论活跃度',
+        left: 'center'
+      },
+      tooltip: {
+        trigger: 'item'
+      },
+      legend: {
+        orient: 'vertical',
+        left: 'left'
+      },
+      series: [
+        {
+          name: '技术社区讨论活跃度',
+          type: 'pie',
+          radius: '50%',
+          data: [
+            { value: 1048, name: 'Vue' },
+            { value: 735, name: 'React' },
+            { value: 580, name: 'Angular' },
+            { value: 484, name: 'JQuery' },
+            { value: 300, name: 'Php' }
+          ],
+          emphasis: {
+            itemStyle: {
+              shadowBlur: 10,
+              shadowOffsetX: 0,
+              shadowColor: 'rgba(0, 0, 0, 0.5)'
+            }
+          }
+        }
+      ]
+    });
   }, []);
 
   return (
@@ -129,14 +202,14 @@ const Dashboard: React.FC = memo(() => {
       </div>
       <div className={styles.chart}>
         <Card
-          title='订单和流水走势图'
+          title='月发表文章数及访问量'
           extra={<Button type='primary'>刷新</Button>}
         >
           <div id='lineChart' className={styles.itemLine}></div>
         </Card>
       </div>
       <div className={styles.chart}>
-        <Card title='司机分布' extra={<Button type='primary'>刷新</Button>}>
+        <Card title='社区技术占比及活跃度' extra={<Button type='primary'>刷新</Button>}>
           <div id='pieChartCity' className={styles.itemLine}></div>
           <div id='pieChartAge' className={styles.itemLine}></div>
         </Card>
