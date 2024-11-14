@@ -1,15 +1,31 @@
-import React, { memo, useEffect } from 'react';
-import { Button, Card, Descriptions, DescriptionsProps } from 'antd';
+import React, { memo, useEffect, useState } from 'react';
+import { Button, Card, Descriptions, DescriptionsProps, message } from 'antd';
 import * as echarts from 'echarts';
 
 import styles from './index.module.less';
 import store from '@/store';
 import { useUserRole } from '@/hook/use-user-role';
 import { UserStatusEnum } from '@/types/common';
+import { getReportData } from '@/api';
+import { DashboardPorps } from '@/types/api';
 
 const Dashboard: React.FC = memo(() => {
   const { userInfo } = store;
   const { roleName, isAdmin } = useUserRole(userInfo.roleList);
+  const [messageApi, contextHolder] = message.useMessage();
+  const [reportData, setReportData] = useState<DashboardPorps.ReportData>(
+    {} as DashboardPorps.ReportData
+  );
+  useEffect(() => {
+    getReportData()
+      .then((res: DashboardPorps.ReportData) => {
+        setReportData(res);
+      })
+      .catch(err => {
+        messageApi.error('获取数据失败', err);
+      });
+  }, []);
+  console.log('reportData+++++', reportData);
 
   const items: DescriptionsProps['items'] = [
     {
@@ -46,10 +62,10 @@ const Dashboard: React.FC = memo(() => {
     const pieChartCityInstance = echarts.init(pieChartCityDom as HTMLElement);
     const pieChartAgeDom = document.getElementById('pieChartAge');
     const pieChartAgeInstance = echarts.init(pieChartAgeDom as HTMLElement);
+    const radarChartDom = document.getElementById('radarChart');
+    const radarChartInstance = echarts.init(radarChartDom as HTMLElement);
+
     lineChartInstance.setOption({
-      title: {
-        text: '月发表文章数及访问量'
-      },
       tooltip: {
         trigger: 'axis'
       },
@@ -110,7 +126,8 @@ const Dashboard: React.FC = memo(() => {
         {
           name: '各技术栈占比',
           type: 'pie',
-          radius: '50%',
+          radius: [50, 180],
+          roseType: 'area',
           data: [
             { value: 50.6, name: 'Vue' },
             { value: 30.4, name: 'React' },
@@ -162,6 +179,35 @@ const Dashboard: React.FC = memo(() => {
         }
       ]
     });
+
+    radarChartInstance.setOption({
+      legend: {
+        data: ['各个框架']
+      },
+      radar: {
+        indicator: [
+          { name: 'Vue', max: 6000 },
+          { name: 'React', max: 3500 },
+          { name: 'Angular', max: 200 },
+          { name: 'JQuery', max: 50 },
+          { name: 'Php', max: 5 }
+        ]
+      },
+      series: [
+        {
+          name: '各个框架',
+          type: 'radar',
+          data: [{ value: [3000, 1512, 145, 34, 4], name: '各个技术站' }],
+          symbol: 'none',
+          itemStyle: {
+            color: '#F9713C'
+          },
+          areaStyle: {
+            opacity: 0.1
+          }
+        }
+      ]
+    });
   }, []);
 
   return (
@@ -175,30 +221,17 @@ const Dashboard: React.FC = memo(() => {
         <Descriptions title='Welcome To Space For React!' items={items} />
       </div>
       <div className={styles.report}>
-        <div className={styles.card}>
-          <div className='title'>React</div>
-          <div className={styles.data}>
-            The library for web and native user interfaces
-          </div>
-        </div>
-        <div className={styles.card}>
-          <div className='title'>TypeScript</div>
-          <div className={styles.data}>
-            TypeScript is a superset of JavaScript that compiles to clean
-            JavaScript output
-          </div>
-        </div>
-        <div className={styles.card}>
-          <div className='title'>Vite</div>
-          <div className={styles.data}>
-            Vite is a blazing fast frontend build tool powering the next
-            generation of web applications
-          </div>
-        </div>
-        <div className={styles.card}>
-          <div className='title'>Antd</div>
-          <div className={styles.data}>Ant Design of React</div>
-        </div>
+        {reportData &&
+          reportData?.frameData?.map(
+            (item: DashboardPorps.frameItem, index: number) => {
+              return (
+                <div key={index} className={styles.card}>
+                  <div className='title'>{item.frameName}</div>
+                  <div className={styles.data}>{item.frameMessage}</div>
+                </div>
+              );
+            }
+          )}
       </div>
       <div className={styles.chart}>
         <Card
@@ -209,13 +242,18 @@ const Dashboard: React.FC = memo(() => {
         </Card>
       </div>
       <div className={styles.chart}>
-        <Card title='社区技术占比及活跃度' extra={<Button type='primary'>刷新</Button>}>
-          <div id='pieChartCity' className={styles.itemLine}></div>
-          <div id='pieChartAge' className={styles.itemLine}></div>
+        <Card
+          title='社区技术占比及活跃度'
+          extra={<Button type='primary'>刷新</Button>}
+        >
+          <div className={styles.pieChart}>
+            <div id='pieChartCity' className={styles.itemPie}></div>
+            <div id='pieChartAge' className={styles.itemPie}></div>
+          </div>
         </Card>
       </div>
       <div className={styles.chart}>
-        <Card title='模型诊断' extra={<Button type='primary'>刷新</Button>}>
+        <Card title='技术发展趋势' extra={<Button type='primary'>刷新</Button>}>
           <div id='radarChart' className={styles.itemLine}></div>
         </Card>
       </div>

@@ -26,3 +26,13 @@ export namespace LoginUserInfo {
     _id: string;
   }
 }
+
+export namespace DashboardPorps {
+  export interface ReportData {
+    frameData: frameItem[];
+  }
+  export interface frameItem {
+    frameName: string;
+    frameMessage: string;
+  }
+}
