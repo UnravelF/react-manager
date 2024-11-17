@@ -29,10 +29,35 @@ export namespace LoginUserInfo {
 
 export namespace DashboardPorps {
   export interface ReportData {
-    frameData: frameItem[];
+    frameData: FrameItem[];
   }
-  export interface frameItem {
+  export interface FrameItem {
     frameName: string;
     frameMessage: string;
+  }
+  export interface LineData {
+    label: string[];
+    articleCount: number[];
+    visitsCount: number[];
+  }
+  export interface PieData {
+    cityData: PieDataProps[];
+    ageData: PieDataProps[];
+  }
+  export interface PieDataProps {
+    value: number;
+    name: string;
+  }
+  export interface RadarData {
+    indicator: IndicatorProp[];
+    seriesValue: RadarSeriesData[];
+  }
+  export interface IndicatorProp {
+    name: string;
+    max: number;
+  }
+  export interface RadarSeriesData {
+    value: number[];
+    name: string;
   }
 }

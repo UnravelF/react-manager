@@ -1,13 +1,13 @@
 import React, { memo, useEffect, useState } from 'react';
 import { Button, Card, Descriptions, DescriptionsProps, message } from 'antd';
-import * as echarts from 'echarts';
 
 import styles from './index.module.less';
 import store from '@/store';
 import { useUserRole } from '@/hook/use-user-role';
 import { UserStatusEnum } from '@/types/common';
-import { getReportData } from '@/api';
+import { getReportData, getLineData, getPieData, getRadarData } from '@/api';
 import { DashboardPorps } from '@/types/api';
+import { useChart } from '@/hook/use-charts';
 
 const Dashboard: React.FC = memo(() => {
   const { userInfo } = store;
@@ -25,7 +25,6 @@ const Dashboard: React.FC = memo(() => {
         messageApi.error('获取数据失败', err);
       });
   }, []);
-  console.log('reportData+++++', reportData);
 
   const items: DescriptionsProps['items'] = [
     {
@@ -54,18 +53,14 @@ const Dashboard: React.FC = memo(() => {
       children: userInfo.deptName
     }
   ];
+  const [lineRef, lineChartInstance] = useChart();
+  const [pieCityRef, pieChartCityInstance] = useChart();
+  const [pieAgeRef, pieChartAgeInstance] = useChart();
+  const [radarRef, radarChartInstance] = useChart();
 
-  useEffect(() => {
-    const lineChartDom = document.getElementById('lineChart');
-    const lineChartInstance = echarts.init(lineChartDom as HTMLElement);
-    const pieChartCityDom = document.getElementById('pieChartCity');
-    const pieChartCityInstance = echarts.init(pieChartCityDom as HTMLElement);
-    const pieChartAgeDom = document.getElementById('pieChartAge');
-    const pieChartAgeInstance = echarts.init(pieChartAgeDom as HTMLElement);
-    const radarChartDom = document.getElementById('radarChart');
-    const radarChartInstance = echarts.init(radarChartDom as HTMLElement);
-
-    lineChartInstance.setOption({
+  const initLineData = async () => {
+    const res = await getLineData();
+    lineChartInstance?.setOption({
       tooltip: {
         trigger: 'axis'
       },
@@ -78,20 +73,7 @@ const Dashboard: React.FC = memo(() => {
         bottom: 50
       },
       xAxis: {
-        data: [
-          '1月',
-          '2月',
-          '3月',
-          '4月',
-          '5月',
-          '6月',
-          '7月',
-          '8月',
-          '9月',
-          '10月',
-          '11月',
-          '12月'
-        ]
+        data: res.label
       },
       yAxis: {
         type: 'value'
@@ -100,17 +82,19 @@ const Dashboard: React.FC = memo(() => {
         {
           name: '月文章数',
           type: 'line',
-          data: [10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120]
+          data: res.articleCount
         },
         {
           name: '月访问量',
           type: 'line',
-          data: [100, 220, 330, 440, 550, 660, 770, 880, 990, 150, 350, 120]
+          data: res.visitsCount
         }
       ]
     });
-
-    pieChartCityInstance.setOption({
+  };
+  const initPieData = async () => {
+    const res = await getPieData();
+    pieChartCityInstance?.setOption({
       title: {
         text: '各技术栈占比',
         left: 'center'
@@ -128,13 +112,7 @@ const Dashboard: React.FC = memo(() => {
           type: 'pie',
           radius: [50, 180],
           roseType: 'area',
-          data: [
-            { value: 50.6, name: 'Vue' },
-            { value: 30.4, name: 'React' },
-            { value: 15.4, name: 'Angular' },
-            { value: 2.1, name: 'JQuery' },
-            { value: 0.5, name: 'Php' }
-          ],
+          data: res.cityData,
           emphasis: {
             itemStyle: {
               shadowBlur: 10,
@@ -145,7 +123,7 @@ const Dashboard: React.FC = memo(() => {
         }
       ]
     });
-    pieChartAgeInstance.setOption({
+    pieChartAgeInstance?.setOption({
       title: {
         text: '技术社区讨论活跃度',
         left: 'center'
@@ -162,13 +140,7 @@ const Dashboard: React.FC = memo(() => {
           name: '技术社区讨论活跃度',
           type: 'pie',
           radius: '50%',
-          data: [
-            { value: 1048, name: 'Vue' },
-            { value: 735, name: 'React' },
-            { value: 580, name: 'Angular' },
-            { value: 484, name: 'JQuery' },
-            { value: 300, name: 'Php' }
-          ],
+          data: res.ageData,
           emphasis: {
             itemStyle: {
               shadowBlur: 10,
@@ -179,25 +151,22 @@ const Dashboard: React.FC = memo(() => {
         }
       ]
     });
-
-    radarChartInstance.setOption({
+  };
+  const initRadarData = async () => {
+    const res = await getRadarData();
+    console.log('res+++++', res);
+    radarChartInstance?.setOption({
       legend: {
         data: ['各个框架']
       },
       radar: {
-        indicator: [
-          { name: 'Vue', max: 6000 },
-          { name: 'React', max: 3500 },
-          { name: 'Angular', max: 200 },
-          { name: 'JQuery', max: 50 },
-          { name: 'Php', max: 5 }
-        ]
+        indicator: res.indicator
       },
       series: [
         {
           name: '各个框架',
           type: 'radar',
-          data: [{ value: [3000, 1512, 145, 34, 4], name: '各个技术站' }],
+          data: res.seriesValue,
           symbol: 'none',
           itemStyle: {
             color: '#F9713C'
@@ -208,7 +177,13 @@ const Dashboard: React.FC = memo(() => {
         }
       ]
     });
-  }, []);
+  };
+
+  useEffect(() => {
+    initLineData();
+    initPieData();
+    initRadarData();
+  }, [initLineData, initPieData, initRadarData ]);
 
   return (
     <div className={styles.dashboard}>
@@ -223,7 +198,7 @@ const Dashboard: React.FC = memo(() => {
       <div className={styles.report}>
         {reportData &&
           reportData?.frameData?.map(
-            (item: DashboardPorps.frameItem, index: number) => {
+            (item: DashboardPorps.FrameItem, index: number) => {
               return (
                 <div key={index} className={styles.card}>
                   <div className='title'>{item.frameName}</div>
@@ -236,25 +211,23 @@ const Dashboard: React.FC = memo(() => {
       <div className={styles.chart}>
         <Card
           title='月发表文章数及访问量'
-          extra={<Button type='primary'>刷新</Button>}
         >
-          <div id='lineChart' className={styles.itemLine}></div>
+          <div ref={lineRef} className={styles.itemLine}></div>
         </Card>
       </div>
       <div className={styles.chart}>
         <Card
           title='社区技术占比及活跃度'
-          extra={<Button type='primary'>刷新</Button>}
         >
           <div className={styles.pieChart}>
-            <div id='pieChartCity' className={styles.itemPie}></div>
-            <div id='pieChartAge' className={styles.itemPie}></div>
+            <div ref={pieCityRef} className={styles.itemPie}></div>
+            <div ref={pieAgeRef} className={styles.itemPie}></div>
           </div>
         </Card>
       </div>
       <div className={styles.chart}>
-        <Card title='技术发展趋势' extra={<Button type='primary'>刷新</Button>}>
-          <div id='radarChart' className={styles.itemLine}></div>
+        <Card title='技术发展趋势'>
+          <div ref={radarRef} className={styles.itemLine}></div>
         </Card>
       </div>
     </div>
