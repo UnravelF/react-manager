@@ -19,6 +19,7 @@ Mock.mock(`${env.baseApi}/users/getUserInfo`, {
     state: 1,
     userEmail: 'hgfhgf1225@163.com',
     userId: 100001,
+    key: '1',
     _id: '5e81c0462739d9001a000001'
   },
   msg: '获取用户信息成功'

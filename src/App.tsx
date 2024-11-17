@@ -3,6 +3,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { ConfigProvider } from 'antd';
 import './App.css';
 import Root from './router/router';
+import './mock/index';
 
 function App() {
   return (

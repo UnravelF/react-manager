@@ -23,3 +23,7 @@ export const getPieData = () => {
 export const getRadarData = () => {
   return request.get<DashboardPorps.RadarData>('/workbench/dashboard/radarData')
 }
+
+export const getUserList = () => {
+  return request.get<LoginUserInfo.UserInfoProps[]>('/workbench/system/userList')
+}

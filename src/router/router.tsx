@@ -5,6 +5,7 @@ import Welcome from '@/pages/welcome';
 import Login from '@/pages/login';
 import NotFound from '@/pages/notFound';
 import Dashboard from '@/pages/dashboard';
+import UserList from '@/pages/system/user';
 
 const routes = [
   {
@@ -25,6 +26,11 @@ const routes = [
       {
         path: '/dashboard',
         element: <Dashboard />
+      },
+
+      {
+        path: '/userList',
+        element: <UserList />
       }
     ]
   },

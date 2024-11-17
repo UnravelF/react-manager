@@ -5,6 +5,20 @@ export interface Result<T = any> {
   msg: string;
 }
 
+export interface ResultData<T = any> {
+  list: T[];
+  page: {
+    pageNum: number;
+    pageSize: number;
+    total: number | 0;
+  };
+}
+
+export interface SearchParams {
+  username: string;
+  roleId: number;
+}
+
 export namespace LoginRequest {
   export interface params {
     userName: string;
@@ -24,6 +38,8 @@ export namespace LoginUserInfo {
     userEmail: string;
     userId: number;
     _id: string;
+    key: string;
+    createTime: string
   }
 }
 
