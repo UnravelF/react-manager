@@ -1,11 +1,12 @@
 import { Navigate, useRoutes } from 'react-router-dom';
+import React from 'react';
 
-import Layout from '@/layout'
-import Welcome from '@/pages/welcome';
-import Login from '@/pages/login';
-import NotFound from '@/pages/notFound';
-import Dashboard from '@/pages/dashboard';
-import UserList from '@/pages/system/user';
+const Layout = React.lazy(() => import('@/layout'));
+const Welcome = React.lazy(() => import('@/pages/welcome'));
+const Login = React.lazy(() => import('@/pages/login'));
+const NotFound = React.lazy(() => import('@/pages/notFound'));
+const Dashboard = React.lazy(() => import('@/pages/dashboard'));
+const UserList = React.lazy(() => import('@/pages/system/user'));
 
 const routes = [
   {
